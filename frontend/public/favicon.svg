@@ -1,0 +1,31 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="16" cy="16" r="15" fill="#1a1a1a" stroke="#4f46e5" stroke-width="2"/>
+  
+  <!-- Stock chart line - more prominent -->
+  <path d="M6 22 L10 18 L14 20 L18 14 L22 16 L26 12" 
+        stroke="#10b981" 
+        stroke-width="3" 
+        fill="none" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"/>
+  
+  <!-- Data points - larger -->
+  <circle cx="6" cy="22" r="2" fill="#10b981"/>
+  <circle cx="10" cy="18" r="2" fill="#10b981"/>
+  <circle cx="14" cy="20" r="2" fill="#10b981"/>
+  <circle cx="18" cy="14" r="2" fill="#10b981"/>
+  <circle cx="22" cy="16" r="2" fill="#10b981"/>
+  <circle cx="26" cy="12" r="2" fill="#10b981"/>
+  
+  <!-- Trending up arrow - more visible -->
+  <path d="M18 8 L22 4 L26 8" 
+        stroke="#4f46e5" 
+        stroke-width="2" 
+        fill="none" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"/>
+  
+  <!-- Add a small "S" for Stock -->
+  <text x="16" y="28" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#4f46e5" text-anchor="middle">S</text>
+</svg>

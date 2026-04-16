@@ -1,0 +1,36 @@
+{
+  "name": "stock-analysis-dashboard",
+  "version": "1.0.0",
+  "description": "A modern stock analysis and forecasting dashboard built with React and FastAPI",
+  "scripts": {
+    "start": "./start.sh",
+    "start:backend": "cd backend && python main.py",
+    "start:frontend": "cd frontend && npm start",
+    "install:backend": "cd backend && pip install -r requirements.txt",
+    "install:frontend": "cd frontend && npm install",
+    "install:all": "npm run install:backend && npm run install:frontend",
+    "build:frontend": "cd frontend && npm run build",
+    "dev": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "clean": "rm -rf backend/venv backend/stock_cache.db frontend/node_modules frontend/build"
+  },
+  "keywords": [
+    "stock",
+    "analysis",
+    "forecasting",
+    "react",
+    "fastapi",
+    "dashboard",
+    "finance",
+    "trading"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "python": ">=3.8.0"
+  }
+}
+
