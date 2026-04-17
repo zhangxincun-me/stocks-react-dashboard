@@ -61,7 +61,7 @@ pip install -r requirements.txt
 
 4. Start the FastAPI server:
 ```bash
-python main.py
+python test.py
 ```
 
 The backend will be available at `http://localhost:8000`
@@ -89,7 +89,7 @@ The frontend will be available at `http://localhost:3000`
 
 1. **Start the backend server** (from the `backend` directory):
 ```bash
-python main.py
+python test.py
 ```
 
 2. **Start the frontend development server** (from the `frontend` directory):
@@ -234,7 +234,7 @@ Enable debug logging by setting environment variables:
 ```bash
 # Backend
 export DEBUG=1
-python main.py
+python test.py
 
 # Frontend
 export REACT_APP_DEBUG=1

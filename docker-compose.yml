@@ -9,7 +9,7 @@ services:
       - PYTHONUNBUFFERED=1
     volumes:
       - ./backend:/app
-    command: python main.py
+    command: python test.py
 
   frontend:
     build: ./frontend
