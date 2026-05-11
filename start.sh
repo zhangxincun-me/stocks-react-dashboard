@@ -36,12 +36,11 @@ start_backend() {
     
     # Start backend
     echo "🚀 Starting FastAPI server on http://localhost:8000"
-    python main.py &
+    cd ..
+    python -m backend.main &
     
     BACKEND_PID=$!
     echo "Backend PID: $BACKEND_PID"
-    
-    cd ..
 }
 
 # Function to start frontend
@@ -94,4 +93,3 @@ echo "Press Ctrl+C to stop all services"
 
 # Wait for user to stop
 wait
-

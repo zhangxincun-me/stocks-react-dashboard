@@ -3,6 +3,7 @@ import pandas as pd
 import pytz
 import feedparser
 import random
+from io import StringIO
 from datetime import datetime, timedelta
 from typing import Tuple, List, Dict, Any
 from fastapi import HTTPException
@@ -24,6 +25,21 @@ def format_baostock_ticker(ticker: str) -> str:
     elif ticker.startswith('0') or ticker.startswith('3'): return f"sz.{ticker}"
     return ticker
 
+def get_latest_baostock_trade_date(now: datetime) -> datetime:
+    for year in range(now.year, now.year - 6, -1):
+        end = now if year == now.year else datetime(year, 12, 31)
+        start = datetime(year, 1, 1)
+        rs = bs.query_trade_dates(start_date=start.strftime('%Y-%m-%d'), end_date=end.strftime('%Y-%m-%d'))
+        latest = None
+        if rs.error_code == '0':
+            while rs.next():
+                row = rs.get_row_data()
+                if len(row) >= 2 and row[1] == '1':
+                    latest = row[0]
+        if latest:
+            return datetime.strptime(latest, '%Y-%m-%d')
+    return now
+
 def is_market_open(ticker: str) -> Tuple[bool, str, datetime]:
     try:
         exchange = get_exchange_from_ticker(ticker)
@@ -41,18 +57,20 @@ def fetch_stock_data(ticker: str, period: str = "1y"):
         if not should_refresh_cache(ticker, period, 'stock'):
             cached = get_cached_data(ticker, period, 'stock')
             if cached and 'hist_data' in cached['data'] and cached['data']['hist_data']:
-                hist = pd.read_json(cached['data']['hist_data'])
+                hist = pd.read_json(StringIO(cached['data']['hist_data']))
                 hist.index = pd.to_datetime(hist.index)
                 return hist, cached['data']['info'], cached['created_at'], cached['market_status'], cached['exchange']
 
-        end_date = datetime.now()
-        period_days = {'1mo': 30, '3mo': 90, '6mo': 180, '1y': 365, '2y': 730, '5y': 1825}.get(period, 3650)
-        start_date = end_date - timedelta(days=period_days)
-
         bs_ticker = format_baostock_ticker(ticker)
         bs.login()
+        end_date = get_latest_baostock_trade_date(datetime.now())
+        period_days = {'1mo': 30, '3mo': 90, '6mo': 180, '1y': 365, '2y': 730, '5y': 1825}.get(period, 3650)
+        start_date = end_date - timedelta(days=period_days)
         rs = bs.query_history_k_data_plus(bs_ticker, "date,open,high,low,close,volume", start_date=start_date.strftime('%Y-%m-%d'), end_date=end_date.strftime('%Y-%m-%d'), frequency="d", adjustflag="2")
-        data_list = [rs.get_row_data() for _ in range(rs.data.shape[0])] if rs.error_code == '0' else []
+        data_list = []
+        if rs.error_code == '0':
+            while rs.next():
+                data_list.append(rs.get_row_data())
         bs.logout()
 
         if not data_list: return None, None, None, None, None
@@ -69,6 +87,8 @@ def fetch_stock_data(ticker: str, period: str = "1y"):
 
         cache_data(ticker, period, (df, info), 'stock', 'open' if m_open else 'closed', exchange)
         return df, info, datetime.now(), m_status, exchange
+    except HTTPException:
+        raise
     except Exception as e:
         bs.logout()
         raise HTTPException(status_code=400, detail=f"Error fetching data: {str(e)}")

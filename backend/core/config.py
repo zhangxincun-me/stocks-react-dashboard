@@ -1,5 +1,8 @@
 # 数据库与缓存配置
-DB_PATH = "stock_cache.db"
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+DB_PATH = str(PROJECT_ROOT / "stock_cache.db")
 CACHE_DURATION_HOURS = 1
 CACHE_DURATION_DAYS = 1
 

@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "A modern stock analysis and forecasting dashboard built with React and FastAPI",
   "scripts": {
-    "start": "./start.sh",
-    "start:backend": "cd backend && python main.py",
+    "start": "npm run dev",
+    "start:unix": "./start.sh",
+    "start:backend": "python -m backend.main",
     "start:frontend": "cd frontend && npm start",
     "install:backend": "cd backend && pip install -r requirements.txt",
     "install:frontend": "cd frontend && npm install",
@@ -33,4 +34,3 @@
     "python": ">=3.8.0"
   }
 }
-

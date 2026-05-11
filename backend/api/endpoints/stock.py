@@ -32,15 +32,20 @@ async def get_stock_data(request: StockDataRequest):
                       'close': float(data['Close'].iloc[i]), 'volume': int(data['Volume'].iloc[i])} for i in
                      range(len(data))]
         current_price = float(data['Close'].iloc[-1])
-        change = float(current_price - data['Close'].iloc[-2])
+        previous_price = float(data['Close'].iloc[-2]) if len(data) > 1 else current_price
+        change = float(current_price - previous_price)
 
         return {
             "ticker": request.ticker, "name": info.get('longName', request.ticker),
-            "currentPrice": current_price, "change": change, "changePercent": (change / data['Close'].iloc[-2]) * 100,
+            "currentPrice": current_price, "change": change,
+            "changePercent": (change / previous_price) * 100 if previous_price else 0,
             "currency": info.get('currency', 'USD'), "marketState": status, "exchange": exchange,
             "high_52w": float(data['High'].max()), "low_52w": float(data['Low'].min()),
-            "volume": int(data['Volume'].iloc[-1]), "data": data_json
+            "volume": int(data['Volume'].iloc[-1]), "data": data_json,
+            "data_timestamp": ts.isoformat() if hasattr(ts, "isoformat") else None
         }
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 

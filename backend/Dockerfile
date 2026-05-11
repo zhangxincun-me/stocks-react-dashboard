@@ -9,15 +9,14 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements and install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY backend/requirements.txt ./backend/requirements.txt
+RUN pip install --no-cache-dir -r backend/requirements.txt
 
 # Copy application code
-COPY . .
+COPY backend ./backend
 
 # Expose port
 EXPOSE 8000
 
 # Start the application
-CMD ["python", "main.py"]
-
+CMD ["python", "-m", "backend.main"]

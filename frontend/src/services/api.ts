@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { StockData, ForecastData, NewsArticle, SearchResult } from '../types';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -14,10 +14,10 @@ const llmApi = axios.create({
   timeout: 60000, // 60 seconds for LLM operations
 });
 
-export const searchStock = async (query: string): Promise<SearchResult> => {
+export const searchStock = async (query: string): Promise<SearchResult[]> => {
   try {
     const response = await api.post('/api/search', { query });
-    return response.data;
+    return Array.isArray(response.data) ? response.data : [response.data];
   } catch (error) {
     console.error('Error searching stock:', error);
     throw new Error('Failed to search for stock');
@@ -175,4 +175,3 @@ export const llmPredict = async (ticker: string, period: string = '1mo') => {
     throw new Error('Failed to make LLM prediction');
   }
 };
-

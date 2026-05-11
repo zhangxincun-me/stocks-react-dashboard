@@ -26,7 +26,9 @@ const StockMetrics: React.FC<StockMetricsProps> = ({ metrics, currency }) => {
   };
 
   const formatCurrency = (num: number) => {
-    if (currency === 'GBp') {
+    if (currency === 'CNY') {
+      return `¥${num.toFixed(2)}`;
+    } else if (currency === 'GBp') {
       return `£${(num / 100).toFixed(2)}`;
     } else if (currency === 'GBP') {
       return `£${num.toFixed(2)}`;
@@ -106,4 +108,3 @@ const StockMetrics: React.FC<StockMetricsProps> = ({ metrics, currency }) => {
 };
 
 export default StockMetrics;
-

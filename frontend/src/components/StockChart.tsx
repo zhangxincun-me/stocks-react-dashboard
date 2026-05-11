@@ -48,7 +48,9 @@ const StockChart: React.FC<StockChartProps> = ({ data, currency = 'USD', newsDat
 
   // Format currency helper
   const formatCurrency = (value: number) => {
-    if (currency === 'GBP') {
+    if (currency === 'CNY') {
+      return '¥' + value.toFixed(2);
+    } else if (currency === 'GBP') {
       return '£' + value.toFixed(2);
     } else if (currency === 'EUR') {
       return '€' + value.toFixed(2);
@@ -401,4 +403,3 @@ const StockChart: React.FC<StockChartProps> = ({ data, currency = 'USD', newsDat
 };
 
 export default StockChart;
-

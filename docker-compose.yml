@@ -1,15 +1,15 @@
-version: '3.8'
-
 services:
   backend:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
     ports:
       - "8000:8000"
     environment:
       - PYTHONUNBUFFERED=1
     volumes:
-      - ./backend:/app
-    command: python test.py
+      - ./backend:/app/backend
+    command: python -m backend.main
 
   frontend:
     build: ./frontend
@@ -23,4 +23,3 @@ services:
     command: npm start
     depends_on:
       - backend
-

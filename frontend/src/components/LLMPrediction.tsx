@@ -322,6 +322,7 @@ const LLMPrediction: React.FC<LLMPredictionProps> = ({ ticker, period }) => {
                   <div className="text-center">
                     <div className="text-2xl font-bold text-white">
                       {prediction.currency === 'USD' ? '$' :
+                       prediction.currency === 'CNY' ? '¥' :
                        prediction.currency === 'GBp' ? '£' :
                        (prediction.currency || '') + ' '}{(prediction.current_price || 0).toFixed(2)}
                     </div>

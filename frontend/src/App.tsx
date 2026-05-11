@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, TrendingUp, BarChart3, Newspaper, Settings, Activity, Brain } from 'lucide-react';
 import StockSearch from './components/StockSearch';
 import StockChart from './components/StockChart';

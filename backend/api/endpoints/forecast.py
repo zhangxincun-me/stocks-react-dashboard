@@ -26,11 +26,30 @@ async def get_forecast(request: ForecastRequest):
             data, request.forecast_days)
         future_dates = pd.date_range(start=data.index[-1] + timedelta(days=1), periods=request.forecast_days).strftime(
             '%Y-%m-%d').tolist()
+        predictions = [{"date": d, "price": float(p)} for d, p in zip(future_dates, f_data)]
+        current_price = float(data['Close'].iloc[-1])
+        forecast_price = float(f_data[-1]) if len(f_data) else current_price
+        price_change = forecast_price - current_price
 
         return {
+            "ticker": request.ticker,
             "method": request.method,
-            "predictions": [{"date": d, "price": float(p)} for d, p in zip(future_dates, f_data)],
-            "accuracy": 0.85, "confidence": 0.75
+            "forecast_days": request.forecast_days,
+            "predictions": predictions,
+            "forecast_data": {
+                "dates": future_dates,
+                "prices": [float(p) for p in f_data]
+            },
+            "summary": {
+                "current_price": current_price,
+                "forecast_price": forecast_price,
+                "price_change": price_change,
+                "percent_change": (price_change / current_price) * 100 if current_price else 0
+            },
+            "accuracy": 0.85,
+            "confidence": 0.75
         }
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

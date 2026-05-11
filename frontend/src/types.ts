@@ -33,6 +33,10 @@ export interface ForecastData {
   ticker: string;
   method: string;
   forecast_days: number;
+  predictions: Array<{
+    date: string;
+    price: number;
+  }>;
   forecast_data: {
     dates: string[];
     prices: number[];
@@ -43,6 +47,8 @@ export interface ForecastData {
     price_change: number;
     percent_change: number;
   };
+  accuracy?: number;
+  confidence?: number;
 }
 
 export interface NewsArticle {
@@ -59,7 +65,10 @@ export interface NewsArticle {
 
 export interface SearchResult {
   ticker: string;
-  company: string;
+  company?: string;
+  name?: string;
+  exchange?: string;
+  type?: string;
 }
 
 // LLM Prediction Types
@@ -127,4 +136,3 @@ export interface LLMResponse {
   message: string;
   data?: LLMPredictionData | LLMBacktestData;
 }
-

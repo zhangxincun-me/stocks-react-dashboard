@@ -61,6 +61,7 @@ const ForecastChart: React.FC<ForecastChartProps> = ({
   }
 
   const formatCurrency = (value: number) => {
+    if (currency === 'CNY') return '¥' + value.toFixed(2);
     if (currency === 'GBP') return '£' + value.toFixed(2);
     if (currency === 'EUR') return '€' + value.toFixed(2);
     if (currency === 'JPY') return '¥' + value.toFixed(0);

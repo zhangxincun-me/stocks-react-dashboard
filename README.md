@@ -1,266 +1,495 @@
-# 📈 Stock Analysis Dashboard - React Edition
+# 智能股票量化分析仪表盘
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![React](https://img.shields.io/badge/React-18.2.0-blue.svg)](https://reactjs.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.104.0-green.svg)](https://fastapi.tiangolo.com/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0.0-blue.svg)](https://www.typescriptlang.org/)
-[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.3.0-38B2AC.svg)](https://tailwindcss.com/)
+这是一个前后端分离的股票分析系统。前端使用 React 构建可视化看板，后端使用 FastAPI 提供股票数据、行情图表、技术指标、价格预测、新闻资讯和 LLM 智能分析接口。
 
-A modern, responsive stock analysis and forecasting dashboard built with React and FastAPI. This is a React-based clone of the original Streamlit application with enhanced UI/UX and better performance.
+项目主要面向股票数据分析、量化预测演示和课程设计场景。系统支持 A 股代码输入，后端会自动转换为 BaoStock 所需格式，例如 `600519` 会转换为 `sh.600519`，`000001` 会转换为 `sz.000001`。
 
-## 🚀 Features
+## 功能特性
 
-- **📈 Interactive Stock Charts**: Real-time stock price visualization with candlestick charts and moving averages
-- **🔮 Advanced Forecasting**: Multiple forecasting algorithms including:
-  - Linear Regression
-  - Polynomial Regression
-  - Moving Average
-  - ARIMA
-  - Facebook Prophet
-  - Support Vector Regression
-- **📰 Real-time News**: Latest news articles related to selected stocks
-- **🎨 Modern Dark Theme**: Beautiful, responsive UI with Tailwind CSS
-- **📊 Key Metrics**: Current price, 52-week high/low, volume, and forecast predictions
-- **🔍 Smart Search**: Search by ticker symbol or company name with autocomplete
-- **📱 Responsive Design**: Works perfectly on desktop, tablet, and mobile devices
+- 股票搜索：支持股票代码搜索与 A 股代码自动格式化。
+- 行情展示：获取历史 K 线数据，包括开盘价、最高价、最低价、收盘价和成交量。
+- 指标统计：展示当前价格、涨跌额、涨跌幅、区间最高价、区间最低价和成交量。
+- 价格预测：支持多种预测算法，包括线性回归、多项式回归、ARIMA、增强 ARIMA、Prophet、SVR 和集成模型。
+- 技术指标：后端计算 RSI、MACD、布林带、ATR、动量、波动率、成交量指标和滞后特征。
+- 新闻资讯：通过 RSS 获取财经新闻，长周期分析时可生成历史新闻数据作为兜底。
+- LLM 分析：支持基于技术指标和新闻情绪的智能方向预测与历史回测。
+- 本地缓存：使用 DuckDB 缓存股票行情和搜索结果，减少重复请求。
+- 市场状态识别：根据不同交易所时区判断开盘、休市状态，并动态控制缓存 TTL。
 
-## 🏗️ Architecture
+## 技术栈
 
-- **Frontend**: React 18 + TypeScript + Tailwind CSS + Chart.js
-- **Backend**: FastAPI + Python 3.8+
-- **Data Source**: Yahoo Finance (yfinance)
-- **Caching**: DuckDB for efficient data caching
-- **Charts**: Chart.js with react-chartjs-2
+### 前端
 
-## 📦 Installation
+| 技术 | 说明 |
+| --- | --- |
+| React | 前端 UI 框架 |
+| TypeScript | 类型约束 |
+| Tailwind CSS | 样式框架 |
+| Chart.js | 股票图表和预测图表 |
+| react-chartjs-2 | Chart.js 的 React 封装 |
+| Axios | HTTP 请求客户端 |
+| lucide-react | 图标库 |
 
-### Prerequisites
+### 后端
 
-- Node.js 16+ and npm
-- Python 3.8+
-- pip
+| 技术 | 说明 |
+| --- | --- |
+| FastAPI | Web API 框架 |
+| Uvicorn | ASGI 服务运行器 |
+| BaoStock | A 股历史行情数据源 |
+| Pandas / NumPy | 数据清洗和向量化计算 |
+| DuckDB | 本地嵌入式缓存数据库 |
+| Scikit-learn | 线性回归、Ridge、SVR、标准化处理 |
+| Statsmodels | ARIMA、SARIMAX 时序模型 |
+| Prophet | 时间序列预测 |
+| Feedparser | RSS 财经新闻解析 |
+| Transformers / PyTorch | LLM 推理相关依赖 |
 
-### Backend Setup
+## 项目结构
 
-1. Navigate to the backend directory:
-```bash
-cd backend
-```
-
-2. Create a virtual environment:
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-4. Start the FastAPI server:
-```bash
-python test.py
-```
-
-The backend will be available at `http://localhost:8000`
-
-### Frontend Setup
-
-1. Navigate to the frontend directory:
-```bash
-cd frontend
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Start the development server:
-```bash
-npm start
-```
-
-The frontend will be available at `http://localhost:3000`
-
-## 🚀 Quick Start
-
-1. **Start the backend server** (from the `backend` directory):
-```bash
-python test.py
-```
-
-2. **Start the frontend development server** (from the `frontend` directory):
-```bash
-npm start
-```
-
-3. **Open your browser** and navigate to `http://localhost:3000`
-
-4. **Search for a stock** using the search bar or click on popular stocks
-
-5. **Explore the features**:
-   - View interactive price charts
-   - Switch between different forecasting methods
-   - Read the latest news
-   - Analyze key metrics
-
-## 📊 API Endpoints
-
-The FastAPI backend provides the following endpoints:
-
-- `POST /api/search` - Search for stock tickers
-- `POST /api/stock-data` - Get stock data and metrics
-- `POST /api/forecast` - Get price forecasts
-- `POST /api/news` - Get news articles
-- `GET /api/health` - Health check
-
-## 🎨 UI Components
-
-- **StockSearch**: Smart search with autocomplete and popular stocks
-- **StockChart**: Interactive price charts with moving averages
-- **ForecastChart**: Forecast visualization with multiple algorithms
-- **StockMetrics**: Key performance indicators
-- **NewsSection**: News articles with external links
-
-## 🔧 Configuration
-
-### Backend Configuration
-
-- **Cache Duration**: Modify `CACHE_DURATION_HOURS` and `CACHE_DURATION_DAYS` in `main.py`
-- **Market Hours**: Update `MARKET_HOURS` for different exchanges
-- **API Rate Limits**: Adjust timeout and retry settings
-
-### Frontend Configuration
-
-- **API Base URL**: Update `API_BASE_URL` in `src/services/api.ts`
-- **Theme Colors**: Modify `tailwind.config.js` for custom colors
-- **Chart Options**: Customize chart appearance in component files
-
-## 📱 Responsive Design
-
-The application is fully responsive and works on:
-- **Desktop**: Full-featured experience with sidebar and main content
-- **Tablet**: Optimized layout with collapsible sidebar
-- **Mobile**: Stacked layout with touch-friendly controls
-
-## 🚀 Deployment
-
-### Backend Deployment
-
-1. **Using Docker**:
-```bash
-# Create Dockerfile in backend directory
-FROM python:3.9-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-COPY . .
-CMD ["python", "main.py"]
-```
-
-2. **Using cloud platforms**:
-   - Heroku
-   - Railway
-   - DigitalOcean App Platform
-   - AWS Elastic Beanstalk
-
-### Frontend Deployment
-
-1. **Build for production**:
-```bash
-npm run build
-```
-
-2. **Deploy to**:
-   - Vercel
-   - Netlify
-   - AWS S3 + CloudFront
-   - GitHub Pages
-
-## 🔍 Development
-
-### Project Structure
-
-```
-Stocks-React/
+```text
+stocks-react-dashboard/
 ├── backend/
-│   ├── main.py              # FastAPI application
-│   ├── requirements.txt     # Python dependencies
-│   └── stock_cache.db      # DuckDB cache (auto-created)
+│   ├── api/
+│   │   ├── router.py
+│   │   └── endpoints/
+│   │       ├── stock.py
+│   │       ├── forecast.py
+│   │       └── llm.py
+│   ├── core/
+│   │   └── config.py
+│   ├── db/
+│   │   └── duckdb_repo.py
+│   ├── schemas/
+│   │   ├── request.py
+│   │   └── response.py
+│   ├── services/
+│   │   ├── data_fetcher.py
+│   │   ├── forecasting.py
+│   │   ├── llm_analyzer.py
+│   │   └── technical_calc.py
+│   ├── main.py
+│   ├── test.py
+│   ├── requirements.txt
+│   └── Dockerfile
 ├── frontend/
 │   ├── public/
 │   ├── src/
-│   │   ├── components/      # React components
-│   │   ├── services/        # API services
-│   │   ├── types.ts         # TypeScript types
-│   │   └── App.tsx          # Main app component
+│   │   ├── components/
+│   │   │   ├── StockSearch.tsx
+│   │   │   ├── StockChart.tsx
+│   │   │   ├── StockMetrics.tsx
+│   │   │   ├── ForecastChart.tsx
+│   │   │   ├── NewsSection.tsx
+│   │   │   └── LLMPrediction.tsx
+│   │   ├── services/
+│   │   │   └── api.ts
+│   │   ├── App.tsx
+│   │   └── types.ts
 │   ├── package.json
 │   └── tailwind.config.js
+├── docker-compose.yml
+├── package.json
+├── start.sh
 └── README.md
 ```
 
-### Adding New Features
+## 后端架构说明
 
-1. **New Forecasting Method**:
-   - Add function in `backend/main.py`
-   - Update frontend dropdown options
-   - Add method to API service
+后端采用分层结构：
 
-2. **New Chart Type**:
-   - Create new component in `src/components/`
-   - Import Chart.js plugins as needed
-   - Add to main App component
+| 层级 | 目录 | 作用 |
+| --- | --- | --- |
+| API 网关层 | `backend/api/` | 接收 HTTP 请求，调用业务服务，返回 JSON |
+| 数据契约层 | `backend/schemas/` | 定义请求体和响应体结构 |
+| 业务服务层 | `backend/services/` | 处理行情获取、新闻抓取、指标计算、预测算法和 LLM 分析 |
+| 数据缓存层 | `backend/db/` | 管理 DuckDB 缓存表、缓存读取、缓存写入和 TTL 判断 |
+| 配置层 | `backend/core/` | 管理数据库路径、缓存时间、交易市场时间配置 |
 
-3. **New Data Source**:
-   - Add API endpoint in `backend/main.py`
-   - Create service function in `src/services/api.ts`
-   - Update types in `src/types.ts`
+请求处理流程：
 
-## 🐛 Troubleshooting
+```text
+前端 React 页面
+  -> Axios 请求
+  -> FastAPI 路由
+  -> Pydantic 参数解析
+  -> Service 业务逻辑
+  -> DuckDB 缓存 / BaoStock 数据源 / 预测模型 / LLM 模型
+  -> JSON 响应
+```
 
-### Common Issues
+## 环境要求
 
-1. **CORS Errors**: Ensure backend is running on port 8000 and frontend on port 3000
-2. **Chart Not Rendering**: Check if Chart.js plugins are properly registered
-3. **API Timeout**: Increase timeout in `src/services/api.ts`
-4. **Build Errors**: Clear node_modules and reinstall dependencies
+- Node.js 16 或更高版本
+- Python 3.8 或更高版本
+- pip
+- npm
 
-### Debug Mode
+建议使用 Python 虚拟环境安装后端依赖，避免污染全局环境。
 
-Enable debug logging by setting environment variables:
+## 本地运行
+
+### 1. 安装后端依赖
+
+Windows PowerShell：
+
+```powershell
+cd backend
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+macOS / Linux：
+
 ```bash
-# Backend
-export DEBUG=1
-python test.py
+cd backend
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
 
-# Frontend
-export REACT_APP_DEBUG=1
+### 2. 启动后端服务
+
+在项目根目录执行：
+
+```bash
+python -m backend.main
+```
+
+后端默认运行在：
+
+```text
+http://localhost:8000
+```
+
+接口文档地址：
+
+```text
+http://localhost:8000/docs
+```
+
+### 3. 安装前端依赖
+
+打开新的终端窗口，在项目根目录执行：
+
+```bash
+cd frontend
+npm install
+```
+
+### 4. 启动前端页面
+
+```bash
 npm start
 ```
 
-## 📄 License
+前端默认运行在：
 
-This project is for educational and informational purposes only. Stock market investments carry risk, and past performance does not guarantee future results. Always consult with a financial advisor before making investment decisions.
+```text
+http://localhost:3000
+```
 
-## 🤝 Contributing
+## 根目录脚本
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+项目根目录的 `package.json` 提供了常用脚本：
 
-## 📞 Support
+```bash
+npm run install:backend
+npm run install:frontend
+npm run install:all
+npm run start:backend
+npm run start:frontend
+npm run dev
+```
 
-For questions or issues:
-1. Check the troubleshooting section
-2. Search existing issues
-3. Create a new issue with detailed description
+其中：
 
----
+- `npm run start:backend`：执行 `python -m backend.main`。
+- `npm run start:frontend`：进入 `frontend` 并执行 `npm start`。
+- `npm run dev`：同时启动前端和后端。
 
-**Note**: This application is for educational purposes only. Always verify data accuracy and consult financial professionals before making investment decisions.
+如果使用 Windows PowerShell，`start.sh` 不是最推荐的启动方式，建议按上面的手动步骤分别启动后端和前端。
 
+## Docker 运行
+
+项目提供了 `docker-compose.yml`，可以使用：
+
+```bash
+docker-compose up --build
+```
+
+Docker 会运行分层后的后端入口 `python -m backend.main`。
+
+## API 接口
+
+### 股票搜索
+
+```http
+POST /api/search
+```
+
+请求示例：
+
+```json
+{
+  "query": "600519"
+}
+```
+
+功能说明：
+
+- 去除输入首尾空格。
+- 自动识别 A 股代码。
+- 使用 DuckDB 缓存搜索结果。
+
+### 股票行情
+
+```http
+POST /api/stock-data
+```
+
+请求示例：
+
+```json
+{
+  "ticker": "sh.600519",
+  "period": "1y"
+}
+```
+
+支持周期：
+
+```text
+1mo, 3mo, 6mo, 1y, 2y, 5y
+```
+
+返回内容包括：
+
+- 股票代码
+- 股票名称
+- 当前价格
+- 涨跌额
+- 涨跌幅
+- 最高价
+- 最低价
+- 成交量
+- 市场状态
+- K 线数组
+
+### 价格预测
+
+```http
+POST /api/forecast
+```
+
+请求示例：
+
+```json
+{
+  "ticker": "sh.600519",
+  "period": "1y",
+  "forecast_days": 30,
+  "method": "enhanced_linear"
+}
+```
+
+支持算法：
+
+| method | 说明 |
+| --- | --- |
+| `linear` | 线性回归 |
+| `enhanced_linear` | 基于技术指标和滞后特征的增强线性模型 |
+| `polynomial` | 多项式回归 |
+| `arima` | ARIMA 时间序列模型 |
+| `enhanced_arima` | 使用外生技术指标的 SARIMAX 模型 |
+| `prophet` | Prophet 时间序列模型 |
+| `svr` | 支持向量回归 |
+| `ensemble` | 多模型加权集成 |
+
+### 新闻资讯
+
+```http
+POST /api/news
+```
+
+请求示例：
+
+```json
+{
+  "ticker": "sh.600519",
+  "num_articles": 5,
+  "period": "1y"
+}
+```
+
+功能说明：
+
+- 短周期优先读取 RSS 财经新闻。
+- 长周期使用历史新闻生成逻辑。
+- RSS 请求失败时自动使用兜底新闻数据。
+
+### LLM 智能预测
+
+```http
+POST /api/llm/predict
+```
+
+请求示例：
+
+```json
+{
+  "ticker": "sh.600519",
+  "period": "1mo"
+}
+```
+
+功能说明：
+
+- 获取最近行情数据。
+- 计算技术指标。
+- 分析新闻情绪。
+- 输出上涨、下跌或中性方向预测。
+- 返回预测置信度。
+
+### LLM 历史回测
+
+```http
+POST /api/llm/backtest
+```
+
+请求示例：
+
+```json
+{
+  "ticker": "sh.600519",
+  "period": "1y",
+  "start_date": "2024-01-01",
+  "end_date": "2024-12-31"
+}
+```
+
+功能说明：
+
+- 基于历史行情执行方向预测回放。
+- 输出预测分布、平均置信度和回测摘要。
+
+## 缓存机制
+
+后端使用 DuckDB 作为本地缓存数据库，默认数据库文件为：
+
+```text
+stock_cache.db
+```
+
+缓存表包括：
+
+| 表名 | 说明 |
+| --- | --- |
+| `stock_data` | 缓存股票行情数据 |
+| `earnings_data` | 预留财报数据缓存 |
+| `search_cache` | 缓存股票搜索结果 |
+
+缓存刷新策略：
+
+- 开盘期间：缓存 1 小时。
+- 休市期间：缓存 1 天。
+- 搜索结果：缓存 24 小时。
+
+市场状态通过 `backend/core/config.py` 中的交易时间配置判断。
+
+## 预测算法说明
+
+后端预测算法集中在 `backend/services/forecasting.py`。
+
+所有预测结果都会经过 `normalize_forecast()` 修正，使预测曲线的起点对齐历史最后一个收盘价，避免前端图表出现明显断层。
+
+复杂模型均带有异常降级逻辑：
+
+- ARIMA 失败时回退到移动平均。
+- Prophet 失败时回退到移动平均。
+- SVR 失败时回退到移动平均。
+- 增强线性模型样本不足时回退到普通线性回归。
+- 增强 ARIMA 样本不足时回退到普通 ARIMA。
+
+## 常见问题
+
+### 1. 后端启动时报错 `ModuleNotFoundError`
+
+先确认已经安装后端依赖：
+
+```bash
+cd backend
+pip install -r requirements.txt
+```
+
+### 2. 前端提示无法连接后端
+
+检查后端是否运行在：
+
+```text
+http://localhost:8000
+```
+
+前端请求地址配置在：
+
+```text
+frontend/src/services/api.ts
+```
+
+默认值为：
+
+```ts
+const API_BASE_URL = 'http://localhost:8000';
+```
+
+### 3. 端口被占用
+
+后端默认端口是 `8000`，前端默认端口是 `3000`。如果端口被占用，可以先关闭占用进程，或者修改对应启动配置。
+
+### 4. LLM 功能不可用
+
+LLM 模型加载失败不会影响普通股票行情和预测接口。若只需要行情、新闻和传统预测算法，可以忽略 LLM 加载失败信息。
+
+### 5. 股票没有数据
+
+可能原因：
+
+- 股票代码格式不正确。
+- BaoStock 数据源暂时不可用。
+- 查询周期内没有交易数据。
+- 输入的是非 A 股代码，但当前后端主要按 BaoStock 数据源处理。
+
+## 开发说明
+
+### 新增预测算法
+
+1. 在 `backend/services/forecasting.py` 中新增预测函数。
+2. 在 `backend/api/endpoints/forecast.py` 的 `method_map` 中注册方法名。
+3. 在前端预测方法下拉选择中增加对应选项。
+
+### 新增接口
+
+1. 在 `backend/api/endpoints/` 下创建新的接口文件。
+2. 在 `backend/api/router.py` 中注册路由。
+3. 如需请求或响应结构，优先在 `backend/schemas/` 中定义 Pydantic 模型。
+
+### 新增前端组件
+
+1. 在 `frontend/src/components/` 下创建组件。
+2. 在 `frontend/src/App.tsx` 中引入并挂载。
+3. 如需请求后端接口，在 `frontend/src/services/api.ts` 中封装 Axios 方法。
+
+## 相关文档
+
+项目中已生成后端技术报告：
+
+```text
+backend_technical_report.md
+```
+
+该文档详细说明了后端架构、数据获取、技术指标、预测算法、LLM 分析、DuckDB 缓存和异常降级设计。
+
+## 免责声明
+
+本项目仅用于学习、课程设计和技术演示，不构成任何投资建议。股票市场存在风险，预测结果仅供参考，不能作为真实交易依据。
